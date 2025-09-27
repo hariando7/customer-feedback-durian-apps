@@ -17,36 +17,42 @@ export default function FeedbackForm() {
       const { Html5Qrcode } = await import("html5-qrcode");
       const qrRegionId = "qr-reader";
 
-      // jika instance belum ada → buat
       if (!html5QrCodeRef.current) {
         html5QrCodeRef.current = new Html5Qrcode(qrRegionId);
       }
 
-      // coba dapatkan kamera perangkat
+      // Ambil daftar kamera
       const cameras = await Html5Qrcode.getCameras();
-      const cameraId = cameras && cameras.length ? cameras[0].id : null;
+      let backCameraId: string | null = null;
+
+      if (cameras && cameras.length > 0) {
+        // cari kamera belakang (environment)
+        const backCamera = cameras.find((cam) =>
+          cam.label.toLowerCase().includes("back") ||
+          cam.label.toLowerCase().includes("rear") ||
+          cam.label.toLowerCase().includes("environment")
+        );
+
+        backCameraId = backCamera ? backCamera.id : cameras[0].id;
+      }
 
       const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-      if (cameraId) {
+      if (backCameraId) {
         await html5QrCodeRef.current.start(
-          cameraId,
+          backCameraId,
           config,
           (decodedText: string) => {
             setQrValue(decodedText);
             setStatus("QR terdeteksi!");
-            // hentikan scanner setelah membaca 1x (opsional)
             stopScanner();
           },
-          (errorMessage: string) => {
-            // error per frame (bisa diabaikan)
-            // console.debug("scan error", errorMessage);
-          }
+          () => { }
         );
       } else {
-        // fallback menggunakan facingMode
+        // fallback untuk browser yang tidak mendukung getCameras()
         await html5QrCodeRef.current.start(
-          { facingMode: { exact: "environment" } },
+          { facingMode: "environment" },
           config,
           (decodedText: string) => {
             setQrValue(decodedText);
