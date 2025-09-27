@@ -6,7 +6,8 @@ export default function FeedbackForm() {
   const [qrValue, setQrValue] = useState("");
   const [feedback, setFeedback] = useState("");
   const [status, setStatus] = useState("");
-  const [showScanner, setShowScanner] = useState(true); // 👈 state untuk visibilitas scanner
+  const [showScanner, setShowScanner] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const html5QrCodeRef = useRef<any>(null);
   const isScanningRef = useRef(false);
@@ -14,6 +15,7 @@ export default function FeedbackForm() {
   // Mulai scanner
   const startScanner = async () => {
     setStatus("Memulai scanner...");
+    setLoading(true);
     try {
       const { Html5Qrcode } = await import("html5-qrcode");
       const qrRegionId = "qr-reader";
@@ -22,7 +24,6 @@ export default function FeedbackForm() {
         html5QrCodeRef.current = new Html5Qrcode(qrRegionId);
       }
 
-      // Ambil daftar kamera
       const cameras = await Html5Qrcode.getCameras();
       let backCameraId: string | null = null;
 
@@ -40,8 +41,9 @@ export default function FeedbackForm() {
       const handleSuccess = (decodedText: string) => {
         setQrValue(decodedText);
         setStatus("QR terdeteksi!");
-        setShowScanner(false); // 👈 sembunyikan scanner
+        setShowScanner(false);
         stopScanner();
+        alert("QR berhasil terbaca!");
       };
 
       if (backCameraId) {
@@ -63,7 +65,10 @@ export default function FeedbackForm() {
       setStatus("Scanning...");
     } catch (err: any) {
       console.error(err);
+      alert("Gagal memulai scanner. Pastikan kamera diizinkan.");
       setStatus("Gagal memulai scanner: " + (err?.message ?? err));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,7 +87,7 @@ export default function FeedbackForm() {
     }
   };
 
-  // Cleanup saat unmount
+  // Cleanup
   useEffect(() => {
     return () => {
       if (html5QrCodeRef.current) {
@@ -102,6 +107,7 @@ export default function FeedbackForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("Mengirim...");
+    setLoading(true);
 
     try {
       const res = await fetch("/api/feedback", {
@@ -117,15 +123,20 @@ export default function FeedbackForm() {
 
       if (data.success) {
         setStatus("Terima kasih atas feedback Anda!");
+        alert("Feedback berhasil dikirim. Terima kasih atas partisipasi Anda!");
         setQrValue("");
         setFeedback("");
-        setShowScanner(true); // 👈 tampilkan scanner lagi setelah kirim
+        setShowScanner(true);
       } else {
         setStatus("Gagal menyimpan: " + (data.message || "Tidak diketahui"));
+        alert("Gagal menyimpan feedback. Silakan coba lagi.");
       }
     } catch (err: any) {
       console.error("Fetch error:", err);
       setStatus("Error: " + (err.message ?? "Terjadi kesalahan"));
+      alert("Terjadi kesalahan jaringan. Mohon coba lagi nanti.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,14 +174,24 @@ export default function FeedbackForm() {
               <button
                 type="button"
                 onClick={startScanner}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
+                disabled={loading}
+                className={`${
+                  loading
+                    ? "bg-green-300 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                } text-white px-4 py-2 rounded-lg font-medium transition`}
               >
-                Start Scanner
+                {loading ? "Memuat..." : "Start Scanner"}
               </button>
               <button
                 type="button"
                 onClick={stopScanner}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium transition"
+                disabled={loading}
+                className={`${
+                  loading
+                    ? "bg-gray-200 cursor-not-allowed"
+                    : "bg-gray-100 hover:bg-gray-200"
+                } text-gray-800 px-4 py-2 rounded-lg font-medium transition`}
               >
                 Stop Scanner
               </button>
@@ -214,19 +235,30 @@ export default function FeedbackForm() {
           <div className="flex justify-between">
             <button
               type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition"
+              disabled={loading}
+              className={`${
+                loading
+                  ? "bg-green-300 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
+              } text-white font-semibold px-6 py-2 rounded-lg transition`}
             >
-              Submit
+              {loading ? "Mengirim..." : "Submit"}
             </button>
             <button
               type="button"
+              disabled={loading}
               onClick={() => {
                 setQrValue("");
                 setFeedback("");
                 setStatus("");
-                setShowScanner(true); // 👈 tampilkan scanner lagi jika di-reset
+                setShowScanner(true);
+                alert("Form telah direset.");
               }}
-              className="bg-red-50 hover:bg-red-100 text-red-600 font-medium px-4 py-2 rounded-lg transition"
+              className={`${
+                loading
+                  ? "bg-red-100 cursor-not-allowed"
+                  : "bg-red-50 hover:bg-red-100"
+              } text-red-600 font-medium px-4 py-2 rounded-lg transition`}
             >
               Reset
             </button>
