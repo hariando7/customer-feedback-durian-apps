@@ -128,67 +128,112 @@ export default function FeedbackForm() {
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-xl font-bold mb-4">Media Feedback Customer</h1>
-
-      <div className="mb-3">
-        <div id="qr-reader" style={{ width: "100%", height: 300, borderRadius: 8, overflow: "hidden", border: "1px solid #e5e7eb" }} />
-        <div className="flex gap-2 mt-2">
-          <button
-            type="button"
-            onClick={startScanner}
-            className="bg-blue-600 text-white px-3 py-1 rounded"
-          >
-            Start Scanner
-          </button>
-          <button
-            type="button"
-            onClick={stopScanner}
-            className="bg-gray-200 text-black px-3 py-1 rounded"
-          >
-            Stop Scanner
-          </button>
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center py-10 px-4">
+      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg border border-green-100">
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-6">
+          <img
+            src="/ggp-logo.png"
+            alt="PT Great Giant Pineapple"
+            className="w-20 h-20 mb-3"
+          />
+          <h1 className="text-2xl font-extrabold text-green-800 tracking-wide">
+            Media Feedback Customer
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            PT Great Giant Pineapple
+          </p>
         </div>
-        <p className="text-sm mt-2">Status: {status}</p>
+
+        {/* QR Scanner */}
+        <div className="mb-6">
+          <div
+            id="qr-reader"
+            className="w-full h-64 border-2 border-dashed border-green-300 rounded-xl flex items-center justify-center bg-green-50"
+          >
+            <p className="text-gray-400 text-sm">Kamera akan tampil di sini...</p>
+          </div>
+
+          <div className="flex gap-3 mt-3 justify-center">
+            <button
+              type="button"
+              onClick={startScanner}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
+            >
+              Start Scanner
+            </button>
+            <button
+              type="button"
+              onClick={stopScanner}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium transition"
+            >
+              Stop Scanner
+            </button>
+          </div>
+
+          <p className="text-sm text-center text-gray-600 mt-3">
+            Status: <span className="font-semibold">{status}</span>
+          </p>
+        </div>
+
+        {/* Feedback Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* QR Buah */}
+          <div>
+            <label className="block text-sm font-medium text-green-800 mb-1">
+              QR Buah
+            </label>
+            <input
+              type="text"
+              value={qrValue}
+              readOnly
+              className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700 bg-gray-50"
+              placeholder="Hasil scan akan muncul di sini"
+            />
+          </div>
+
+          {/* Feedback */}
+          <div>
+            <label className="block text-sm font-medium text-green-800 mb-1">
+              Feedback
+            </label>
+            <textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700"
+              placeholder="Tulis komentar, saran, atau keluhan Anda..."
+              rows={4}
+              required
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-between">
+            <button
+              type="submit"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setQrValue("");
+                setFeedback("");
+                setStatus("");
+              }}
+              className="bg-red-50 hover:bg-red-100 text-red-600 font-medium px-4 py-2 rounded-lg transition"
+            >
+              Reset
+            </button>
+          </div>
+        </form>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-gray-400 mt-6">
+          © {new Date().getFullYear()} PT Great Giant Pineapple
+        </p>
       </div>
-
-      <form onSubmit={handleSubmit} className="space-y-3 mt-4">
-        <div>
-          <label className="block text-sm mb-1">QR Buah:</label>
-          <input
-            type="text"
-            value={qrValue}
-            readOnly
-            className="border p-2 w-full rounded"
-            placeholder="Hasil scan akan muncul di sini"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">Feedback:</label>
-          <textarea
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            className="border p-2 w-full rounded"
-            required
-            placeholder="Tulis komentar atau saran..."
-            rows={4}
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-            Submit
-          </button>
-          <button
-            type="button"
-            onClick={() => { setQrValue(""); setFeedback(""); setStatus(""); }}
-            className="bg-red-100 text-red-700 px-3 py-2 rounded"
-          >
-            Reset
-          </button>
-        </div>
-      </form>
     </div>
   );
 }
