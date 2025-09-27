@@ -6,11 +6,12 @@ export default function FeedbackForm() {
   const [qrValue, setQrValue] = useState("");
   const [feedback, setFeedback] = useState("");
   const [status, setStatus] = useState("");
-  // Use type assertion to allow assignment of Html5Qrcode instance
+  const [showScanner, setShowScanner] = useState(true); // 👈 state untuk visibilitas scanner
+
   const html5QrCodeRef = useRef<any>(null);
   const isScanningRef = useRef(false);
 
-  // Start scanner (lazy import html5-qrcode to avoid SSR issues)
+  // Mulai scanner
   const startScanner = async () => {
     setStatus("Memulai scanner...");
     try {
@@ -26,39 +27,35 @@ export default function FeedbackForm() {
       let backCameraId: string | null = null;
 
       if (cameras && cameras.length > 0) {
-        // cari kamera belakang (environment)
         const backCamera = cameras.find((cam) =>
           cam.label.toLowerCase().includes("back") ||
           cam.label.toLowerCase().includes("rear") ||
           cam.label.toLowerCase().includes("environment")
         );
-
         backCameraId = backCamera ? backCamera.id : cameras[0].id;
       }
 
       const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
+      const handleSuccess = (decodedText: string) => {
+        setQrValue(decodedText);
+        setStatus("QR terdeteksi!");
+        setShowScanner(false); // 👈 sembunyikan scanner
+        stopScanner();
+      };
+
       if (backCameraId) {
         await html5QrCodeRef.current.start(
           backCameraId,
           config,
-          (decodedText: string) => {
-            setQrValue(decodedText);
-            setStatus("QR terdeteksi!");
-            stopScanner();
-          },
-          () => { }
+          handleSuccess,
+          () => {}
         );
       } else {
-        // fallback untuk browser yang tidak mendukung getCameras()
         await html5QrCodeRef.current.start(
           { facingMode: "environment" },
           config,
-          (decodedText: string) => {
-            setQrValue(decodedText);
-            setStatus("QR terdeteksi!");
-            stopScanner();
-          }
+          handleSuccess
         );
       }
 
@@ -70,12 +67,11 @@ export default function FeedbackForm() {
     }
   };
 
-  // Stop scanner
+  // Hentikan scanner
   const stopScanner = async () => {
     if (html5QrCodeRef.current && isScanningRef.current) {
       try {
         await html5QrCodeRef.current.stop();
-        // clear UI
         html5QrCodeRef.current.clear();
       } catch (err) {
         console.error("Error stop scanner:", err);
@@ -92,17 +88,17 @@ export default function FeedbackForm() {
       if (html5QrCodeRef.current) {
         html5QrCodeRef.current
           .stop()
-          .catch(() => { })
+          .catch(() => {})
           .finally(() => {
             try {
               html5QrCodeRef.current.clear();
-            } catch (_) { }
+            } catch (_) {}
           });
       }
     };
   }, []);
 
-  // Submit ke Google Apps Script (ganti URL)
+  // Submit ke Apps Script
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("Mengirim...");
@@ -118,12 +114,12 @@ export default function FeedbackForm() {
       });
 
       const data = await res.json();
-      console.log("Response:", data); // <— Tambahkan ini untuk debug
 
       if (data.success) {
         setStatus("Terima kasih atas feedback Anda!");
         setQrValue("");
         setFeedback("");
+        setShowScanner(true); // 👈 tampilkan scanner lagi setelah kirim
       } else {
         setStatus("Gagal menyimpan: " + (data.message || "Tidak diketahui"));
       }
@@ -152,39 +148,42 @@ export default function FeedbackForm() {
         </div>
 
         {/* QR Scanner */}
-        <div className="mb-6">
-          <div
-            id="qr-reader"
-            className="w-full h-64 border-2 border-dashed border-green-300 rounded-xl flex items-center justify-center bg-green-50"
-          >
-            <p className="text-gray-400 text-sm">Kamera akan tampil di sini...</p>
-          </div>
-
-          <div className="flex gap-3 mt-3 justify-center">
-            <button
-              type="button"
-              onClick={startScanner}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
+        {showScanner && (
+          <div className="mb-6">
+            <div
+              id="qr-reader"
+              className="w-full h-64 border-2 border-dashed border-green-300 rounded-xl flex items-center justify-center bg-green-50"
             >
-              Start Scanner
-            </button>
-            <button
-              type="button"
-              onClick={stopScanner}
-              className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium transition"
-            >
-              Stop Scanner
-            </button>
-          </div>
+              <p className="text-gray-400 text-sm">
+                Kamera akan tampil di sini...
+              </p>
+            </div>
 
-          <p className="text-sm text-center text-gray-600 mt-3">
-            Status: <span className="font-semibold">{status}</span>
-          </p>
-        </div>
+            <div className="flex gap-3 mt-3 justify-center">
+              <button
+                type="button"
+                onClick={startScanner}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
+              >
+                Start Scanner
+              </button>
+              <button
+                type="button"
+                onClick={stopScanner}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium transition"
+              >
+                Stop Scanner
+              </button>
+            </div>
+
+            <p className="text-sm text-center text-gray-600 mt-3">
+              Status: <span className="font-semibold">{status}</span>
+            </p>
+          </div>
+        )}
 
         {/* Feedback Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* QR Buah */}
           <div>
             <label className="block text-sm font-medium text-green-800 mb-1">
               QR Buah
@@ -198,7 +197,6 @@ export default function FeedbackForm() {
             />
           </div>
 
-          {/* Feedback */}
           <div>
             <label className="block text-sm font-medium text-green-800 mb-1">
               Feedback
@@ -213,7 +211,6 @@ export default function FeedbackForm() {
             />
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-between">
             <button
               type="submit"
@@ -227,6 +224,7 @@ export default function FeedbackForm() {
                 setQrValue("");
                 setFeedback("");
                 setStatus("");
+                setShowScanner(true); // 👈 tampilkan scanner lagi jika di-reset
               }}
               className="bg-red-50 hover:bg-red-100 text-red-600 font-medium px-4 py-2 rounded-lg transition"
             >
@@ -235,7 +233,6 @@ export default function FeedbackForm() {
           </div>
         </form>
 
-        {/* Footer */}
         <p className="text-center text-xs text-gray-400 mt-6">
           © {new Date().getFullYear()} PT Great Giant Pineapple
         </p>
