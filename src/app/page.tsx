@@ -1,101 +1,194 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useEffect, useRef, useState } from "react";
+
+export default function FeedbackForm() {
+  const [qrValue, setQrValue] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [status, setStatus] = useState("");
+  // Use type assertion to allow assignment of Html5Qrcode instance
+  const html5QrCodeRef = useRef<any>(null);
+  const isScanningRef = useRef(false);
+
+  // Start scanner (lazy import html5-qrcode to avoid SSR issues)
+  const startScanner = async () => {
+    setStatus("Memulai scanner...");
+    try {
+      const { Html5Qrcode } = await import("html5-qrcode");
+      const qrRegionId = "qr-reader";
+
+      // jika instance belum ada → buat
+      if (!html5QrCodeRef.current) {
+        html5QrCodeRef.current = new Html5Qrcode(qrRegionId);
+      }
+
+      // coba dapatkan kamera perangkat
+      const cameras = await Html5Qrcode.getCameras();
+      const cameraId = cameras && cameras.length ? cameras[0].id : null;
+
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+      if (cameraId) {
+        await html5QrCodeRef.current.start(
+          cameraId,
+          config,
+          (decodedText: string) => {
+            setQrValue(decodedText);
+            setStatus("QR terdeteksi!");
+            // hentikan scanner setelah membaca 1x (opsional)
+            stopScanner();
+          },
+          (errorMessage: string) => {
+            // error per frame (bisa diabaikan)
+            // console.debug("scan error", errorMessage);
+          }
+        );
+      } else {
+        // fallback menggunakan facingMode
+        await html5QrCodeRef.current.start(
+          { facingMode: { exact: "environment" } },
+          config,
+          (decodedText: string) => {
+            setQrValue(decodedText);
+            setStatus("QR terdeteksi!");
+            stopScanner();
+          }
+        );
+      }
+
+      isScanningRef.current = true;
+      setStatus("Scanning...");
+    } catch (err: any) {
+      console.error(err);
+      setStatus("Gagal memulai scanner: " + (err?.message ?? err));
+    }
+  };
+
+  // Stop scanner
+  const stopScanner = async () => {
+    if (html5QrCodeRef.current && isScanningRef.current) {
+      try {
+        await html5QrCodeRef.current.stop();
+        // clear UI
+        html5QrCodeRef.current.clear();
+      } catch (err) {
+        console.error("Error stop scanner:", err);
+      } finally {
+        isScanningRef.current = false;
+        setStatus((s) => (qrValue ? "QR ditemukan" : "Scanner berhenti"));
+      }
+    }
+  };
+
+  // Cleanup saat unmount
+  useEffect(() => {
+    return () => {
+      if (html5QrCodeRef.current) {
+        html5QrCodeRef.current
+          .stop()
+          .catch(() => { })
+          .finally(() => {
+            try {
+              html5QrCodeRef.current.clear();
+            } catch (_) { }
+          });
+      }
+    };
+  }, []);
+
+  // Submit ke Google Apps Script (ganti URL)
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus("Mengirim...");
+
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          qr_buah: qrValue,
+          feedback,
+        }),
+      });
+
+      const data = await res.json();
+      console.log("Response:", data); // <— Tambahkan ini untuk debug
+
+      if (data.success) {
+        setStatus("Terima kasih atas feedback Anda!");
+        setQrValue("");
+        setFeedback("");
+      } else {
+        setStatus("Gagal menyimpan: " + (data.message || "Tidak diketahui"));
+      }
+    } catch (err: any) {
+      console.error("Fetch error:", err);
+      setStatus("Error: " + (err.message ?? "Terjadi kesalahan"));
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="p-6 max-w-md mx-auto">
+      <h1 className="text-xl font-bold mb-4">Media Feedback Customer</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <div className="mb-3">
+        <div id="qr-reader" style={{ width: "100%", height: 300, borderRadius: 8, overflow: "hidden", border: "1px solid #e5e7eb" }} />
+        <div className="flex gap-2 mt-2">
+          <button
+            type="button"
+            onClick={startScanner}
+            className="bg-blue-600 text-white px-3 py-1 rounded"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Start Scanner
+          </button>
+          <button
+            type="button"
+            onClick={stopScanner}
+            className="bg-gray-200 text-black px-3 py-1 rounded"
           >
-            Read our docs
-          </a>
+            Stop Scanner
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <p className="text-sm mt-2">Status: {status}</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-3 mt-4">
+        <div>
+          <label className="block text-sm mb-1">QR Buah:</label>
+          <input
+            type="text"
+            value={qrValue}
+            readOnly
+            className="border p-2 w-full rounded"
+            placeholder="Hasil scan akan muncul di sini"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        </div>
+
+        <div>
+          <label className="block text-sm mb-1">Feedback:</label>
+          <textarea
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+            className="border p-2 w-full rounded"
+            required
+            placeholder="Tulis komentar atau saran..."
+            rows={4}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+
+        <div className="flex gap-2">
+          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+            Submit
+          </button>
+          <button
+            type="button"
+            onClick={() => { setQrValue(""); setFeedback(""); setStatus(""); }}
+            className="bg-red-100 text-red-700 px-3 py-2 rounded"
+          >
+            Reset
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
