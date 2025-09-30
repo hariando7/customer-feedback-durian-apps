@@ -5,6 +5,10 @@ import React, { useEffect, useRef, useState } from "react";
 export default function FeedbackForm() {
   const [qrValue, setQrValue] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [texture, setTexture] = useState("");
+  const [rasa, setRasa] = useState("");
+  const [warna, setWarna] = useState("");
+  const [afterTester, setAfterTester] = useState("");
   const [status, setStatus] = useState("");
   const [showScanner, setShowScanner] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -116,6 +120,10 @@ export default function FeedbackForm() {
         body: JSON.stringify({
           qr_buah: qrValue,
           feedback,
+          texture,
+          rasa,
+          warna,
+          afterTester,
         }),
       });
 
@@ -126,6 +134,10 @@ export default function FeedbackForm() {
         alert("Feedback berhasil dikirim. Terima kasih atas partisipasi Anda!");
         setQrValue("");
         setFeedback("");
+        setTexture("");
+        setRasa("");
+        setWarna("");
+        setAfterTester("");
         setShowScanner(true);
       } else {
         setStatus("Gagal menyimpan: " + (data.message || "Tidak diketahui"));
@@ -227,6 +239,62 @@ export default function FeedbackForm() {
               onChange={(e) => setFeedback(e.target.value)}
               className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700"
               placeholder="Tulis komentar, saran, atau keluhan Anda..."
+              rows={4}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-green-800 mb-1">
+              Texsture
+            </label>
+            <textarea
+              value={texture}
+              onChange={(e) => setTexture(e.target.value)}
+              className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700"
+              placeholder="Tulis komentar anda mengenai Texsture Buah"
+              rows={4}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-green-800 mb-1">
+              Rasa
+            </label>
+            <textarea
+              value={rasa}
+              onChange={(e) => setRasa(e.target.value)}
+              className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700"
+              placeholder="Tulis komentar anda mengenai Rasa Buah"
+              rows={4}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-green-800 mb-1">
+              Warna
+            </label>
+            <textarea
+              value={warna}
+              onChange={(e) => setWarna(e.target.value)}
+              className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700"
+              placeholder="Tulis komentar anda mengenai Warna Buah"
+              rows={4}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-green-800 mb-1">
+              After tester
+            </label>
+            <textarea
+              value={afterTester}
+              onChange={(e) => setAfterTester(e.target.value)}
+              className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700"
+              placeholder="Tulis komentar anda mengenai After tester Buah"
               rows={4}
               required
             />
