@@ -1,16 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { IconHome } from "@tabler/icons-react";
-
-const links = [
-  {
-    title: "Beranda",
-    icon: <IconHome className="h-full w-full text-white" />,
-    href: "/",
-  },
-];
 
 function HomePage({ className }: { className?: string }) {
   const [qrValue, setQrValue] = useState("");
