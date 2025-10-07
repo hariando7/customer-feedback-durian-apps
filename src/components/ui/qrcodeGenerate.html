@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      input[type="text"] {
+        width: 80%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 10px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #qrcode {
+        margin: 20px auto;
+        width: 200px;
+        height: 200px;
+      }
+      a {
+        text-decoration: none;
+        color: white;
+        background-color: #28a745;
+        padding: 10px 20px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 10px;
+      }
+      a:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>QR Code Generator</h1>
+    <p>Masukkan link di bawah ini untuk membuat dan mengunduh QR Code:</p>
+    <input type="text" id="link-input" placeholder="Masukkan link di sini" />
+    <button onclick="generateQRCode()">Generate QR Code</button>
+    <div id="qrcode"></div>
+    <a id="download-link" style="display: none" download="qrcode.png"
+      >Unduh QR Code</a
+    >
+
+    <script>
+      function generateQRCode() {
+        const link = document.getElementById("link-input").value;
+        const qrCodeContainer = document.getElementById("qrcode");
+        const downloadLink = document.getElementById("download-link");
+
+        // Hapus QR Code sebelumnya
+        qrCodeContainer.innerHTML = "";
+        downloadLink.style.display = "none";
+
+        if (!link) {
+          alert("Harap masukkan link terlebih dahulu!");
+          return;
+        }
+
+        // Buat QR Code
+        const qrCode = new QRCode(qrCodeContainer, {
+          text: link,
+          width: 200,
+          height: 200,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H,
+        });
+
+        // Tunggu hingga QR Code selesai dibuat
+        setTimeout(() => {
+          // Ambil elemen canvas dari QR Code
+          const qrCanvas = qrCodeContainer.querySelector("canvas");
+          if (qrCanvas) {
+            // Konversi canvas ke URL gambar
+            const qrImage = qrCanvas.toDataURL("image/png");
+
+            // Update link unduh
+            downloadLink.href = qrImage;
+            downloadLink.style.display = "inline-block";
+          }
+        }, 500);
+      }
+    </script>
+  </body>
+</html>
