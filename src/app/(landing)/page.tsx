@@ -1,7 +1,7 @@
 import HomePage from "@/components/landing/page/HomePage";
 import React from "react";
 export const metadata = {
-  title: "Percetakan Media",
+  title: "Durian Apps || Great Giant Foods",
   icons: {
     icon: "/assets/images/favicon.ico",
   },
