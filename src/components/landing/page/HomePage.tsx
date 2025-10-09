@@ -7,12 +7,24 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 function HomePage({ className }: { className?: string }) {
+  /*
+  Color: from whitish to golden yellow
+  Aroma: weak to strong
+  Texture Creamy
+  Texture Smooth
+  Sweet
+  Bitter
+  Alcohol
+  */
   const [qrValue, setQrValue] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [texture, setTexture] = useState("");
-  const [rasa, setRasa] = useState("");
-  const [warna, setWarna] = useState("");
-  const [afterTester, setAfterTester] = useState("");
+  const [color, setColor] = useState("");
+  const [aroma, setAroma] = useState("");
+  const [textureCreamy, setTextureCreamy] = useState("");
+  const [textureSmooth, setTextureSmooth] = useState("");
+  const [sweet, setSweet] = useState("");
+  const [bitter, setBitter] = useState("");
+  const [alcohol, setAlcohol] = useState("");
   const [status, setStatus] = useState("");
   const [showScanner, setShowScanner] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -125,10 +137,13 @@ function HomePage({ className }: { className?: string }) {
         body: JSON.stringify({
           qr_buah: qrValue,
           feedback,
-          texture,
-          rasa,
-          warna,
-          afterTester,
+          color,
+          aroma,
+          textureCreamy,
+          textureSmooth,
+          sweet,
+          bitter,
+          alcohol,
         }),
       });
 
@@ -139,10 +154,13 @@ function HomePage({ className }: { className?: string }) {
         alert("Feedback berhasil dikirim. Terima kasih atas partisipasi Anda!");
         setQrValue("");
         setFeedback("");
-        setTexture("");
-        setRasa("");
-        setWarna("");
-        setAfterTester("");
+        setColor("");
+        setAroma("");
+        setTextureCreamy("");
+        setTextureSmooth("");
+        setSweet("");
+        setBitter("");
+        setAlcohol("");
         setShowScanner(true);
       } else {
         setStatus("Gagal menyimpan: " + (data.message || "Tidak diketahui"));
@@ -206,7 +224,7 @@ function HomePage({ className }: { className?: string }) {
             <h1 className="text-2xl font-extrabold text-[#D4B63F] tracking-wide">
               Customer Feedback Durian
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-500 text-sm md:text-lg mt-1">
               Great Giant Foods
             </p>
           </div>
@@ -218,7 +236,7 @@ function HomePage({ className }: { className?: string }) {
                 id="qr-reader"
                 className="w-full h-64 border-2 border-dashed border-[#E7C952] rounded-xl flex items-center justify-center bg-[#E7C952]/20"
               >
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-400 text-sm md:text-lg">
                   Kamera akan tampil di sini...
                 </p>
               </div>
@@ -255,9 +273,12 @@ function HomePage({ className }: { className?: string }) {
           )}
 
           {/* Feedback Form */}
+          <div className="block text-sm md:text-lg font-medium text-black mb-4 mt-4 text-justify">
+            <span className="text-red-500">*Keterangan:</span> Panelis diminta melakukan analisis sensori berdasarkan intensitas setiap parameter yang diamati, mulai dari yang paling lemah hingga yang paling kuat. Penilaian dilakukan dengan memberikan skor pada rentang 0 hingga 7, di mana semakin tinggi skor menunjukkan intensitas yang semakin kuat.
+          </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#E7C952] mb-1">
+              <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
                 QR Buah
               </label>
               <input
@@ -269,200 +290,229 @@ function HomePage({ className }: { className?: string }) {
               />
             </div>
 
-            <div className="block text-sm font-medium text-red-500 mb-2">
-              *Parameter 1 = Color: from whitish to golden yellow <br />
-              *Paramerter 2 = Aroma: weak to strong <br />
-              *Parameter 3 = Texture Creamy <br />
-              *Paramter 4 = Texture Smooth <br />
-              *Parameter 5 = Sweet <br />
-              *Parameter 6 = Bitter <br />
-              *Parameter 7 = Alcohol <br />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#E7C952] mb-2">
-                Feedback
-              </label>
-              <div className="flex justify-between gap-2">
-                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                  <label
-                    key={num}
-                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(feedback) === num
-                        ? "text-white bg-[#E7C952] shadow-md scale-105"
-                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                      } rounded-full p-3 w-10 text-center`}
-                  >
-                    <input
-                      type="radio"
-                      name="feedback"
-                      value={num}
-                      checked={Number(feedback) === num}
-                      onChange={() => setFeedback(String(num))}
-                      className="hidden"
-                    />
-                    <span className="font-semibold">{num}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* <div>
-              <label className="block text-sm font-medium text-green-800 mb-1">
-                Feedback
-              </label>
-              <textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="w-full border border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100 p-3 rounded-lg text-gray-700"
-                placeholder="Tulis komentar, saran, atau keluhan Anda..."
-                rows={4}
-                required
-              />
-            </div> */}
-
-            <div>
-              <label className="block text-sm font-medium text-[#E7C952] mb-1">
-                Texsture
-              </label>
-              {/* <textarea
-                value={texture}
-                onChange={(e) => setTexture(e.target.value)}
-                className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
-                placeholder="Tulis komentar anda mengenai Texsture Buah"
-                rows={4}
-                required
-              /> */}
-              <div className="flex justify-between gap-2">
-                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                  <label
-                    key={num}
-                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(texture) === num
-                        ? "text-white bg-[#E7C952] shadow-md scale-105"
-                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                      } rounded-full p-3 w-10 text-center`}
-                  >
-                    <input
-                      type="radio"
-                      name="texture"
-                      value={num}
-                      checked={Number(texture) === num}
-                      onChange={() => setTexture(String(num))}
-                      className="hidden"
-                    />
-                    <span className="font-semibold">{num}</span>
-                  </label>
-                ))}
+            <div className="m-0">
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Color
+                </label>
+                <div className="flex justify-between gap-2">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <label
+                      key={num}
+                      className={`flex flex-col items-center cursor-pointer transition-all duration-200
+            ${Number(color) === num
+                          ? "text-white bg-[#E7C952] shadow-md scale-105"
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"}
+            rounded-full p-3 w-10 text-center`}
+                    >
+                      <input
+                        type="radio"
+                        name="color"
+                        value={num}
+                        checked={color !== "" && Number(color) === num}
+                        onChange={() => setColor(String(num))}
+                        className="hidden"
+                      />
+                      <span className="font-semibold">{num}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#E7C952] mb-1">
-                Rasa
-              </label>
-              {/* <textarea
-                value={rasa}
-                onChange={(e) => setRasa(e.target.value)}
-                className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
-                placeholder="Tulis komentar anda mengenai Rasa Buah"
-                rows={4}
-                required
-              /> */}
-              <div className="flex justify-between gap-2">
-                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                  <label
-                    key={num}
-                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(rasa) === num
-                        ? "text-white bg-[#E7C952] shadow-md scale-105"
-                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                      } rounded-full p-3 w-10 text-center`}
-                  >
-                    <input
-                      type="radio"
-                      name="rasa"
-                      value={num}
-                      checked={Number(rasa) === num}
-                      onChange={() => setRasa(String(num))}
-                      className="hidden"
-                    />
-                    <span className="font-semibold">{num}</span>
-                  </label>
-                ))}
+              {/* Garis Pemisah */}
+              <hr className="border-t border-[#E7C952]/30 my-2" />
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Aroma
+                </label>
+                <div className="flex justify-between gap-2">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <label
+                      key={num}
+                      className={`flex flex-col items-center cursor-pointer transition-all duration-200
+            ${Number(aroma) === num
+                          ? "text-white bg-[#E7C952] shadow-md scale-105"
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"}
+            rounded-full p-3 w-10 text-center`}
+                    >
+                      <input
+                        type="radio"
+                        name="aroma"
+                        value={num}
+                        checked={aroma !== "" && Number(aroma) === num}
+                        onChange={() => setAroma(String(num))}
+                        className="hidden"
+                      />
+                      <span className="font-semibold">{num}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#E7C952] mb-1">
-                Warna
-              </label>
-              {/* <textarea
-                value={warna}
-                onChange={(e) => setWarna(e.target.value)}
-                className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
-                placeholder="Tulis komentar anda mengenai Warna Buah"
-                rows={4}
-                required
-              /> */}
-              <div className="flex justify-between gap-2">
-                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                  <label
-                    key={num}
-                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(warna) === num
-                        ? "text-white bg-[#E7C952] shadow-md scale-105"
-                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                      } rounded-full p-3 w-10 text-center`}
-                  >
-                    <input
-                      type="radio"
-                      name="warna"
-                      value={num}
-                      checked={Number(warna) === num}
-                      onChange={() => setWarna(String(num))}
-                      className="hidden"
-                    />
-                    <span className="font-semibold">{num}</span>
-                  </label>
-                ))}
+              {/* Garis Pemisah */}
+              <hr className="border-t border-[#E7C952]/30 my-2" />
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Texture Creamy
+                </label>
+                <div className="flex justify-between gap-2">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <label
+                      key={num}
+                      className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(textureCreamy) === num
+                          ? "text-white bg-[#E7C952] shadow-md scale-105"
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                        } rounded-full p-3 w-10 text-center`}
+                    >
+                      <input
+                        type="radio"
+                        name="textureCreamy"
+                        value={num}
+                        checked={textureCreamy !== "" && Number(textureCreamy) === num}
+                        onChange={() => setTextureCreamy(String(num))}
+                        className="hidden"
+                      />
+                      <span className="font-semibold">{num}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#E7C952] mb-1">
-                After tester
-              </label>
-              {/* <textarea
-                value={afterTester}
-                onChange={(e) => setAfterTester(e.target.value)}
-                className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
-                placeholder="Tulis komentar anda mengenai After tester Buah"
-                rows={4}
-                required
-              /> */}
-              <div className="flex justify-between gap-2">
-                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                  <label
-                    key={num}
-                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(afterTester) === num
-                        ? "text-white bg-[#E7C952] shadow-md scale-105"
-                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                      } rounded-full p-3 w-10 text-center`}
-                  >
-                    <input
-                      type="radio"
-                      name="afterTester"
-                      value={num}
-                      checked={Number(afterTester) === num}
-                      onChange={() => setAfterTester(String(num))}
-                      className="hidden"
-                    />
-                    <span className="font-semibold">{num}</span>
-                  </label>
-                ))}
+              {/* Garis Pemisah */}
+              <hr className="border-t border-[#E7C952]/30 my-2" />
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Texture Shmooth
+                </label>
+                <div className="flex justify-between gap-2">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <label
+                      key={num}
+                      className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(textureSmooth) === num
+                          ? "text-white bg-[#E7C952] shadow-md scale-105"
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                        } rounded-full p-3 w-10 text-center`}
+                    >
+                      <input
+                        type="radio"
+                        name="textureSmooth"
+                        value={num}
+                        checked={textureSmooth !== "" && Number(textureSmooth) === num}
+                        onChange={() => setTextureSmooth(String(num))}
+                        className="hidden"
+                      />
+                      <span className="font-semibold">{num}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Garis Pemisah */}
+              <hr className="border-t border-[#E7C952]/30 my-2" />
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Sweet
+                </label>
+                <div className="flex justify-between gap-2">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <label
+                      key={num}
+                      className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(sweet) === num
+                          ? "text-white bg-[#E7C952] shadow-md scale-105"
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                        } rounded-full p-3 w-10 text-center`}
+                    >
+                      <input
+                        type="radio"
+                        name="sweet"
+                        value={num}
+                        checked={sweet !== "" && Number(sweet) === num}
+                        onChange={() => setSweet(String(num))}
+                        className="hidden"
+                      />
+                      <span className="font-semibold">{num}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Garis Pemisah */}
+              <hr className="border-t border-[#E7C952]/30 my-2" />
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Bitter
+                </label>
+                <div className="flex justify-between gap-2">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <label
+                      key={num}
+                      className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(bitter) === num
+                          ? "text-white bg-[#E7C952] shadow-md scale-105"
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                        } rounded-full p-3 w-10 text-center`}
+                    >
+                      <input
+                        type="radio"
+                        name="bitter"
+                        value={num}
+                        checked={bitter !== "" && Number(bitter) === num}
+                        onChange={() => setBitter(String(num))}
+                        className="hidden"
+                      />
+                      <span className="font-semibold">{num}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Garis Pemisah */}
+              <hr className="border-t border-[#E7C952]/30 my-2" />
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Alcohol
+                </label>
+                <div className="flex justify-between gap-2">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <label
+                      key={num}
+                      className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(alcohol) === num
+                          ? "text-white bg-[#E7C952] shadow-md scale-105"
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                        } rounded-full p-3 w-10 text-center`}
+                    >
+                      <input
+                        type="radio"
+                        name="alcohol"
+                        value={num}
+                        checked={alcohol !== "" && Number(alcohol) === num}
+                        onChange={() => setAlcohol(String(num))}
+                        className="hidden"
+                      />
+                      <span className="font-semibold">{num}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Garis Pemisah */}
+              <hr className="border-t border-[#E7C952]/30 my-2" />
+              <div>
+                <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
+                  Feedback
+                </label>
+                <textarea
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
+                  placeholder="Tulis komentar, saran, atau keluhan Anda..."
+                  rows={4}
+                  required
+                />
               </div>
             </div>
 

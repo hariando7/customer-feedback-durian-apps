@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbzsXcj_e-aNPN8JiuPLZ7HVGNMU0hPc8X-Zi0AIbEAc78omZN1T3F4XAMsBgZln8ugd/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyh2-NQdofyL9L9SoZyNzVzHRy1PJexW6nqxKHbDbrV2tj71bT41eGKNThzxjRl0Kxg/exec";
 
     const res = await fetch(scriptUrl, {
       method: "POST",
