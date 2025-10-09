@@ -40,8 +40,8 @@ function HomePage({ className }: { className?: string }) {
     textureSmooth !== "" &&
     sweet !== "" &&
     bitter !== "" &&
-    alcohol !== "" 
-    //qrValue !== ""; // opsional kalau QR wajib juga
+    alcohol !== "" &&
+    qrValue !== ""; // opsional kalau QR wajib juga
 
   // Mulai scanner
   const startScanner = async () => {
