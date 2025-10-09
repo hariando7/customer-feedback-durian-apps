@@ -269,11 +269,20 @@ function HomePage({ className }: { className?: string }) {
               />
             </div>
 
+            <div className="block text-sm font-medium text-red-500 mb-2">
+              *Parameter 1 = Color: from whitish to golden yellow <br />
+              *Paramerter 2 = Aroma: weak to strong <br />
+              *Parameter 3 = Texture Creamy <br />
+              *Paramter 4 = Texture Smooth <br />
+              *Parameter 5 = Sweet <br />
+              *Parameter 6 = Bitter <br />
+              *Parameter 7 = Alcohol <br />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-[#E7C952] mb-2">
-                Feedback (1 = Sangat Buruk, 7 = Sangat Baik)
+                Feedback
               </label>
-
               <div className="flex justify-between gap-2">
                 {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                   <label
@@ -316,56 +325,145 @@ function HomePage({ className }: { className?: string }) {
               <label className="block text-sm font-medium text-[#E7C952] mb-1">
                 Texsture
               </label>
-              <textarea
+              {/* <textarea
                 value={texture}
                 onChange={(e) => setTexture(e.target.value)}
                 className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
                 placeholder="Tulis komentar anda mengenai Texsture Buah"
                 rows={4}
                 required
-              />
+              /> */}
+              <div className="flex justify-between gap-2">
+                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                  <label
+                    key={num}
+                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(texture) === num
+                        ? "text-white bg-[#E7C952] shadow-md scale-105"
+                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                      } rounded-full p-3 w-10 text-center`}
+                  >
+                    <input
+                      type="radio"
+                      name="texture"
+                      value={num}
+                      checked={Number(texture) === num}
+                      onChange={() => setTexture(String(num))}
+                      className="hidden"
+                    />
+                    <span className="font-semibold">{num}</span>
+                  </label>
+                ))}
+              </div>
+
             </div>
 
             <div>
               <label className="block text-sm font-medium text-[#E7C952] mb-1">
                 Rasa
               </label>
-              <textarea
+              {/* <textarea
                 value={rasa}
                 onChange={(e) => setRasa(e.target.value)}
                 className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
                 placeholder="Tulis komentar anda mengenai Rasa Buah"
                 rows={4}
                 required
-              />
+              /> */}
+              <div className="flex justify-between gap-2">
+                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                  <label
+                    key={num}
+                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(rasa) === num
+                        ? "text-white bg-[#E7C952] shadow-md scale-105"
+                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                      } rounded-full p-3 w-10 text-center`}
+                  >
+                    <input
+                      type="radio"
+                      name="rasa"
+                      value={num}
+                      checked={Number(rasa) === num}
+                      onChange={() => setRasa(String(num))}
+                      className="hidden"
+                    />
+                    <span className="font-semibold">{num}</span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-[#E7C952] mb-1">
                 Warna
               </label>
-              <textarea
+              {/* <textarea
                 value={warna}
                 onChange={(e) => setWarna(e.target.value)}
                 className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
                 placeholder="Tulis komentar anda mengenai Warna Buah"
                 rows={4}
                 required
-              />
+              /> */}
+              <div className="flex justify-between gap-2">
+                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                  <label
+                    key={num}
+                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(warna) === num
+                        ? "text-white bg-[#E7C952] shadow-md scale-105"
+                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                      } rounded-full p-3 w-10 text-center`}
+                  >
+                    <input
+                      type="radio"
+                      name="warna"
+                      value={num}
+                      checked={Number(warna) === num}
+                      onChange={() => setWarna(String(num))}
+                      className="hidden"
+                    />
+                    <span className="font-semibold">{num}</span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-[#E7C952] mb-1">
                 After tester
               </label>
-              <textarea
+              {/* <textarea
                 value={afterTester}
                 onChange={(e) => setAfterTester(e.target.value)}
                 className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-lg text-gray-700"
                 placeholder="Tulis komentar anda mengenai After tester Buah"
                 rows={4}
                 required
-              />
+              /> */}
+              <div className="flex justify-between gap-2">
+                {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                  <label
+                    key={num}
+                    className={`flex flex-col items-center cursor-pointer transition-all duration-200
+          ${Number(afterTester) === num
+                        ? "text-white bg-[#E7C952] shadow-md scale-105"
+                        : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                      } rounded-full p-3 w-10 text-center`}
+                  >
+                    <input
+                      type="radio"
+                      name="afterTester"
+                      value={num}
+                      checked={Number(afterTester) === num}
+                      onChange={() => setAfterTester(String(num))}
+                      className="hidden"
+                    />
+                    <span className="font-semibold">{num}</span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             <div className="flex justify-between">
