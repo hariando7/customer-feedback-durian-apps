@@ -8,6 +8,7 @@ import Image from "next/image";
 
 function HomePage({ className }: { className?: string }) {
   /*
+  Parameters : 
   Color: from whitish to golden yellow
   Aroma: weak to strong
   Texture Creamy
@@ -31,6 +32,16 @@ function HomePage({ className }: { className?: string }) {
 
   const html5QrCodeRef = useRef<any>(null);
   const isScanningRef = useRef(false);
+
+  const isFormValid =
+    color !== "" &&
+    aroma !== "" &&
+    textureCreamy !== "" &&
+    textureSmooth !== "" &&
+    sweet !== "" &&
+    bitter !== "" &&
+    alcohol !== "" 
+    //qrValue !== ""; // opsional kalau QR wajib juga
 
   // Mulai scanner
   const startScanner = async () => {
@@ -287,23 +298,25 @@ function HomePage({ className }: { className?: string }) {
                 readOnly
                 className="w-full border border-[#E7C952] focus:border-[#E7C952] focus:ring-2 focus:ring-[#E7C952] p-3 rounded-full text-gray-700 bg-gray-50"
                 placeholder="Hasil scan akan muncul di sini"
+                required
               />
             </div>
 
             <div className="m-0">
               <div>
                 <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
-                  Color
+                  Color: from whitish to golden yellow
                 </label>
                 <div className="flex justify-between gap-2">
                   {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
                     <label
                       key={num}
                       className={`flex flex-col items-center cursor-pointer transition-all duration-200
-            ${Number(color) === num
+                ${color !== "" && Number(color) === num
                           ? "text-white bg-[#E7C952] shadow-md scale-105"
-                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"}
-            rounded-full p-3 w-10 text-center`}
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                        }
+                rounded-full p-3 w-10 text-center`}
                     >
                       <input
                         type="radio"
@@ -312,6 +325,7 @@ function HomePage({ className }: { className?: string }) {
                         checked={color !== "" && Number(color) === num}
                         onChange={() => setColor(String(num))}
                         className="hidden"
+                        required
                       />
                       <span className="font-semibold">{num}</span>
                     </label>
@@ -323,17 +337,18 @@ function HomePage({ className }: { className?: string }) {
               <hr className="border-t border-[#E7C952]/30 my-2" />
               <div>
                 <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
-                  Aroma
+                  Aroma: weak to strong
                 </label>
                 <div className="flex justify-between gap-2">
                   {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
                     <label
                       key={num}
                       className={`flex flex-col items-center cursor-pointer transition-all duration-200
-            ${Number(aroma) === num
+              ${aroma !== "" && Number(aroma) === num
                           ? "text-white bg-[#E7C952] shadow-md scale-105"
-                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"}
-            rounded-full p-3 w-10 text-center`}
+                          : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
+                        }
+              rounded-full p-3 w-10 text-center`}
                     >
                       <input
                         type="radio"
@@ -342,6 +357,7 @@ function HomePage({ className }: { className?: string }) {
                         checked={aroma !== "" && Number(aroma) === num}
                         onChange={() => setAroma(String(num))}
                         className="hidden"
+                        required
                       />
                       <span className="font-semibold">{num}</span>
                     </label>
@@ -360,10 +376,11 @@ function HomePage({ className }: { className?: string }) {
                     <label
                       key={num}
                       className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(textureCreamy) === num
+          ${textureCreamy !== "" && Number(textureCreamy) === num
                           ? "text-white bg-[#E7C952] shadow-md scale-105"
                           : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                        } rounded-full p-3 w-10 text-center`}
+                        }
+          rounded-full p-3 w-10 text-center`}
                     >
                       <input
                         type="radio"
@@ -372,6 +389,7 @@ function HomePage({ className }: { className?: string }) {
                         checked={textureCreamy !== "" && Number(textureCreamy) === num}
                         onChange={() => setTextureCreamy(String(num))}
                         className="hidden"
+                        required
                       />
                       <span className="font-semibold">{num}</span>
                     </label>
@@ -383,17 +401,18 @@ function HomePage({ className }: { className?: string }) {
               <hr className="border-t border-[#E7C952]/30 my-2" />
               <div>
                 <label className="block text-sm md:text-lg font-medium text-[#E7C952] mb-1">
-                  Texture Shmooth
+                  Texture Smooth
                 </label>
                 <div className="flex justify-between gap-2">
                   {[0, 1, 2, 3, 4, 5, 6, 7].map((num) => (
                     <label
                       key={num}
                       className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(textureSmooth) === num
+          ${textureSmooth !== "" && Number(textureSmooth) === num
                           ? "text-white bg-[#E7C952] shadow-md scale-105"
                           : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                        } rounded-full p-3 w-10 text-center`}
+                        }
+          rounded-full p-3 w-10 text-center`}
                     >
                       <input
                         type="radio"
@@ -402,6 +421,7 @@ function HomePage({ className }: { className?: string }) {
                         checked={textureSmooth !== "" && Number(textureSmooth) === num}
                         onChange={() => setTextureSmooth(String(num))}
                         className="hidden"
+                        required
                       />
                       <span className="font-semibold">{num}</span>
                     </label>
@@ -420,10 +440,11 @@ function HomePage({ className }: { className?: string }) {
                     <label
                       key={num}
                       className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(sweet) === num
+          ${sweet !== "" && Number(sweet) === num
                           ? "text-white bg-[#E7C952] shadow-md scale-105"
                           : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                        } rounded-full p-3 w-10 text-center`}
+                        }
+          rounded-full p-3 w-10 text-center`}
                     >
                       <input
                         type="radio"
@@ -432,6 +453,7 @@ function HomePage({ className }: { className?: string }) {
                         checked={sweet !== "" && Number(sweet) === num}
                         onChange={() => setSweet(String(num))}
                         className="hidden"
+                        required
                       />
                       <span className="font-semibold">{num}</span>
                     </label>
@@ -450,10 +472,11 @@ function HomePage({ className }: { className?: string }) {
                     <label
                       key={num}
                       className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(bitter) === num
+          ${bitter !== "" && Number(bitter) === num
                           ? "text-white bg-[#E7C952] shadow-md scale-105"
                           : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                        } rounded-full p-3 w-10 text-center`}
+                        }
+          rounded-full p-3 w-10 text-center`}
                     >
                       <input
                         type="radio"
@@ -462,6 +485,7 @@ function HomePage({ className }: { className?: string }) {
                         checked={bitter !== "" && Number(bitter) === num}
                         onChange={() => setBitter(String(num))}
                         className="hidden"
+                        required
                       />
                       <span className="font-semibold">{num}</span>
                     </label>
@@ -480,10 +504,11 @@ function HomePage({ className }: { className?: string }) {
                     <label
                       key={num}
                       className={`flex flex-col items-center cursor-pointer transition-all duration-200
-          ${Number(alcohol) === num
+          ${alcohol !== "" && Number(alcohol) === num
                           ? "text-white bg-[#E7C952] shadow-md scale-105"
                           : "text-gray-700 bg-[#E7C952]/10 hover:bg-[#E7C952]/70"
-                        } rounded-full p-3 w-10 text-center`}
+                        }
+          rounded-full p-3 w-10 text-center`}
                     >
                       <input
                         type="radio"
@@ -492,6 +517,7 @@ function HomePage({ className }: { className?: string }) {
                         checked={alcohol !== "" && Number(alcohol) === num}
                         onChange={() => setAlcohol(String(num))}
                         className="hidden"
+                        required
                       />
                       <span className="font-semibold">{num}</span>
                     </label>
@@ -519,7 +545,7 @@ function HomePage({ className }: { className?: string }) {
             <div className="flex justify-between">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isFormValid}
                 className={`${loading
                   ? "bg-[#E7C952] cursor-not-allowed"
                   : "bg-[#E7C952] hover:bg-[#E7C952]/70"
